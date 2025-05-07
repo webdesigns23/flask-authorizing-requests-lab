@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
-from sqlalchemy_serializer import SerializerMixin
+from marshmallow import Schema, fields
 
 metadata = MetaData(naming_convention={
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
@@ -8,7 +8,7 @@ metadata = MetaData(naming_convention={
 
 db = SQLAlchemy(metadata=metadata)
 
-class Article(db.Model, SerializerMixin):
+class Article(db.Model):
     __tablename__ = 'articles'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -25,7 +25,7 @@ class Article(db.Model, SerializerMixin):
     def __repr__(self):
         return f'Article {self.id} by {self.author}'
 
-class User(db.Model, SerializerMixin):
+class User(db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -35,3 +35,21 @@ class User(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'User {self.username}, ID {self.id}'
+
+class UserSchema(Schema):
+    id = fields.Int()
+    username = fields.String()
+
+    articles = fields.List(fields.Nested(lambda: ArticlesSchema(exclude=("user",))))
+
+class ArticleSchema(Schema):
+    id = fields.Int()
+    author = fields.String()
+    title = fields.String()
+    content = fields.String()
+    preview = fields.String()
+    minutes_to_read = fields.Int()
+    is_member_only = fields.Boolean()
+    date = fields.DateTime()
+
+    user = fields.Nested(UserSchema(exclude=("articles",)))

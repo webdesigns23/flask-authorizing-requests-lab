@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from flask import Flask, make_response, jsonify, request, session
+from flask import Flask, make_response, request, session
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 
-from models import db, Article, User
+from models import db, Article, User, ArticleSchema, UserSchema
 
 app = Flask(__name__)
 app.secret_key = b'Y\xf1Xz\x00\xad|eQ\x80t \xca\x1a\x10K'
@@ -30,15 +30,15 @@ class ClearSession(Resource):
 class IndexArticle(Resource):
     
     def get(self):
-        articles = [article.to_dict() for article in Article.query.all()]
-        return make_response(jsonify(articles), 200)
+        articles = [ArticleSchema().dump(article) for article in Article.query.all()]
+        return make_response(articles, 200)
 
 class ShowArticle(Resource):
 
     def get(self, id):
 
         article = Article.query.filter(Article.id == id).first()
-        article_json = article.to_dict()
+        article_json = ArticleSchema().dump(article)
 
         if not session.get('user_id'):
             session['page_views'] = 0 if not session.get('page_views') else session.get('page_views')
@@ -61,7 +61,7 @@ class Login(Resource):
         if user:
         
             session['user_id'] = user.id
-            return user.to_dict(), 200
+            return UserSchema().dump(user), 200
 
         return {}, 401
 
@@ -80,7 +80,7 @@ class CheckSession(Resource):
         user_id = session['user_id']
         if user_id:
             user = User.query.filter(User.id == user_id).first()
-            return user.to_dict(), 200
+            return UserSchema().dump(user), 200
         
         return {}, 401
 
