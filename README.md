@@ -7,7 +7,7 @@ only logged in users have access to.
 
 ## Tools & Resources
 
-- [GitHub Repo](https://github.com/learn-co-curriculum/flask-authorization-lab)
+- [GitHub Repo](https://github.com/learn-co-curriculum/flask-authorizing-requests-lab)
 - [What is Authentication? - auth0](https://auth0.com/intro-to-iam/what-is-authentication)
 - [API - Flask: class flask.session](https://flask.palletsprojects.com/en/2.2.x/api/#flask.session)
 
