@@ -35,12 +35,14 @@ class User(db.Model):
 
     def __repr__(self):
         return f'User {self.username}, ID {self.id}'
+    
+    
 
 class UserSchema(Schema):
     id = fields.Int()
     username = fields.String()
 
-    articles = fields.List(fields.Nested(lambda: ArticlesSchema(exclude=("user",))))
+    articles = fields.List(fields.Nested(lambda: ArticleSchema(exclude=("user",))))
 
 class ArticleSchema(Schema):
     id = fields.Int()
